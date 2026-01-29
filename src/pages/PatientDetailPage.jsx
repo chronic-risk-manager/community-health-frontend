@@ -66,7 +66,7 @@ const PatientDetailPage = ({ patientId, navigate }) => {
 
   // Get latest risk level
   // Mapping 'Med' to 'Medium' if necessary to match RiskBadge styles, or passing directly
-  const rawRisk = patient.assessments?.[0]?.risk_level || 'Unknown'
+  const rawRisk = patient.assessments?.[patient.assessments.length - 1]?.risk_level || 'Unknown'
   const currentRisk = rawRisk === 'Med' ? 'Medium' : rawRisk
 
   return (
