@@ -7,4 +7,6 @@ export const ENDPOINTS = {
   // Helper function for dynamic URLs
   PATIENT_DETAIL: (id) => `/patients/${id}/`,
   INDICATORS: '/indicators/',
+  LOGIN: '/token',
+  REGISTER: '/users/',
 };

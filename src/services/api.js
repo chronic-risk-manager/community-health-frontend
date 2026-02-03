@@ -1,12 +1,91 @@
 import { API_BASE_URL, ENDPOINTS } from './endpoints';
 
+// Helper to get headers with Auth token
+const getHeaders = (isJson = true) => {
+  const token = localStorage.getItem('token');
+  const headers = {};
+  
+  if (isJson) {
+    headers['Content-Type'] = 'application/json';
+  }
+
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  return headers;
+};
+
+/**
+ * Registers a new user.
+ */
+export const registerUser = async (userData) => {
+  try {
+    const url = `${API_BASE_URL}${ENDPOINTS.REGISTER}`;
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(userData)
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.detail || 'Registration failed');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error registering:', error);
+    throw error;
+  }
+};
+
+/**
+ * Logs in a user and retrieves an access token.
+ * Note: Uses application/x-www-form-urlencoded as per OpenAPI spec.
+ */
+export const loginUser = async (username, password) => {
+  try {
+    const url = `${API_BASE_URL}${ENDPOINTS.LOGIN}`;
+    
+    // Construct form URL encoded body
+    const formBody = new URLSearchParams();
+    formBody.append('grant_type', 'password');
+    formBody.append('username', username);
+    formBody.append('password', password);
+    // Optional fields per spec, can be left empty if not needed
+    formBody.append('scope', '');
+    formBody.append('client_id', '');
+    formBody.append('client_secret', '');
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: formBody.toString()
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.detail || 'Login failed');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error logging in:', error);
+    throw error;
+  }
+};
+
+
 /**
  * Fetches the list of patients from the backend.
  */
 export const fetchPatients = async () => {
   try {
     const url = `${API_BASE_URL}${ENDPOINTS.PATIENTS_LIST}`;
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      headers: getHeaders()
+    });
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     return await response.json();
   } catch (error) {
@@ -21,7 +100,9 @@ export const fetchPatients = async () => {
 export const fetchPatientDetails = async (id) => {
   try {
     const url = `${API_BASE_URL}${ENDPOINTS.PATIENT_DETAIL(id)}`;
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      headers: getHeaders()
+    });
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     return await response.json();
   } catch (error) {
@@ -38,7 +119,7 @@ export const createPatient = async (patientData) => {
     const url = `${API_BASE_URL}${ENDPOINTS.PATIENTS_LIST}`;
     const response = await fetch(url, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getHeaders(),
       body: JSON.stringify(patientData)
     });
     if (!response.ok) throw new Error(`Failed to create patient`);
@@ -57,7 +138,7 @@ export const updatePatient = async (id, patientData) => {
     const url = `${API_BASE_URL}${ENDPOINTS.PATIENT_DETAIL(id)}`;
     const response = await fetch(url, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getHeaders(),
       body: JSON.stringify(patientData)
     });
     if (!response.ok) throw new Error(`Failed to update patient`);
@@ -77,7 +158,7 @@ export const createIndicator = async (indicatorData) => {
     const url = `${API_BASE_URL}${ENDPOINTS.INDICATORS}`;
     const response = await fetch(url, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getHeaders(),
       body: JSON.stringify(indicatorData)
     });
 
