@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Users, Activity, Calendar, Bell, RefreshCw, AlertCircle } from 'lucide-react';
 import { fetchDashboard } from '../services/api';
+import { useNavigate } from "react-router-dom";
+
 
 // Importing from your existing components folder
 // Note: Ensure these paths match your actual project structure. 
@@ -10,9 +12,11 @@ import SimpleBarChart from '../components/charts/SimpleBarChart';
 // import SimpleLineChart from '../components/SimpleLineChart'; // Available if needed for trend data
 
 const DashboardPage = () => {
+  const navigate = useNavigate();
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
 
   const loadData = async () => {
     setLoading(true);
@@ -99,14 +103,16 @@ const DashboardPage = () => {
 
       {/* KPI Section - Using your KPICard component */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div onClick={() => navigate("/patients")} className="cursor-pointer hover:scale-[1.02] transition-transform">
         <KPICard 
-          title="Total Patients" 
-          value={counts.total_patients} 
-          subtext="Active records" 
-          icon={Users} 
-          colorClass="bg-blue-50 text-blue-600" 
-        />
-        <KPICard 
+         title="Total Patients" 
+         value={counts.total_patients} 
+         subtext="Active records" 
+         icon={Users} 
+         colorClass="bg-blue-50 text-blue-600" 
+       />
+      </div>
+       <KPICard 
           title="High Risk" 
           value={counts.high_risk_patients} 
           subtext="Requires attention" 
