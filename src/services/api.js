@@ -41,7 +41,6 @@ export const registerUser = async (userData) => {
 
 /**
  * Logs in a user and retrieves an access token.
- * Note: Uses application/x-www-form-urlencoded as per OpenAPI spec.
  */
 export const loginUser = async (username, password) => {
   try {
@@ -52,7 +51,6 @@ export const loginUser = async (username, password) => {
     formBody.append('grant_type', 'password');
     formBody.append('username', username);
     formBody.append('password', password);
-    // Optional fields per spec, can be left empty if not needed
     formBody.append('scope', '');
     formBody.append('client_id', '');
     formBody.append('client_secret', '');
@@ -72,6 +70,30 @@ export const loginUser = async (username, password) => {
     return await response.json();
   } catch (error) {
     console.error('Error logging in:', error);
+    throw error;
+  }
+};
+
+/**
+ * Fetches dashboard statistics.
+ */
+export const fetchDashboard = async () => {
+  try {
+    const url = `${API_BASE_URL}${ENDPOINTS.DASHBOARD}`;
+    const response = await fetch(url, {
+      headers: getHeaders()
+    });
+    
+    if (!response.ok) {
+      if (response.status === 401) {
+        throw new Error('Unauthorized');
+      }
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching dashboard:', error);
     throw error;
   }
 };
@@ -151,7 +173,6 @@ export const updatePatient = async (id, patientData) => {
 
 /**
  * Creates a new health indicator record (BP, Glucose).
- * @param {Object} indicatorData - { blood_pressure_sys, blood_pressure_dia, glucose, patient_id }
  */
 export const createIndicator = async (indicatorData) => {
   try {
@@ -166,6 +187,28 @@ export const createIndicator = async (indicatorData) => {
     return await response.json();
   } catch (error) {
     console.error('Error creating indicator:', error);
+    throw error;
+  }
+};
+
+
+/**
+ * Fetches current logged-in user.
+ */
+export const getCurrentUser = async () => {
+  try {
+    const url = `${API_BASE_URL}${ENDPOINTS.ME}`;
+    const response = await fetch(url, {
+      headers: getHeaders()
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch user');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching current user:', error);
     throw error;
   }
 };

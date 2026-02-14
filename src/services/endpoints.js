@@ -9,4 +9,6 @@ export const ENDPOINTS = {
   INDICATORS: '/indicators/',
   LOGIN: '/token',
   REGISTER: '/users/',
+  DASHBOARD: '/dashboard/',
+  ME: '/users/me',
 };

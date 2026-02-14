@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { LogIn, Activity, AlertCircle, Loader2 } from 'lucide-react'
-import { loginUser } from '../services/api.js'
+import { loginUser,  getCurrentUser } from '../services/api.js'
 
 const LoginPage = () => {
   const navigate = useNavigate()
@@ -21,10 +21,18 @@ const LoginPage = () => {
     try {
       const data = await loginUser(formData.username, formData.password)
       // Store token in localStorage for future use
-      if (data.access_token) {
-        localStorage.setItem('token', data.access_token)
-        navigate('/')
-      } else {
+     if (data.access_token) {
+  localStorage.setItem('token', data.access_token)
+
+  // Fetch logged-in user info
+  const user = await getCurrentUser()
+
+  // Save user to localStorage
+  localStorage.setItem('user', JSON.stringify(user))
+
+  navigate('/')
+}
+ else {
         setError('Token not received from server.')
       }
     } catch (err) {

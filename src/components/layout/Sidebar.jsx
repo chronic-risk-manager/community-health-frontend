@@ -9,12 +9,19 @@ import {
 } from 'lucide-react'
 import SidebarItem from '../ui/SidebarItem.jsx'
 import { useNavigate } from 'react-router-dom'
+import { useState } from 'react'
+
 
 const Sidebar = ({ currentView, navigate, isOpen, close }) => {
   const routerNavigate = useNavigate();
+  const [user] = useState(() => {
+    const storedUser = localStorage.getItem("user");
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
 
-  const handleLogout = () => {
+   const handleLogout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
     routerNavigate('/login');
   };
 
@@ -57,7 +64,7 @@ const Sidebar = ({ currentView, navigate, isOpen, close }) => {
               <User size={16} />
             </div>
             <div>
-              <p className="text-sm font-medium text-slate-900">Staff User</p>
+              <p className="text-sm font-medium text-slate-900">{user ? user.username : "User"}</p>
               <p className="text-xs text-slate-500">Logged In</p>
             </div>
           </div>
