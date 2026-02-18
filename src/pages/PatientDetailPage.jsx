@@ -121,7 +121,7 @@ const PatientDetailPage = ({ patientId, navigate }) => {
               <Activity className="text-red-500" size={20} />
               <h3 className="font-semibold text-slate-800">Systolic BP Trend</h3>
             </div>
-            <span className="text-xs text-slate-400">Last 5 records</span>
+          
           </div>
           <div className="w-full">
             {bpData.length > 1 ? (
@@ -141,7 +141,7 @@ const PatientDetailPage = ({ patientId, navigate }) => {
               <Activity className="text-purple-500" size={20} />
               <h3 className="font-semibold text-slate-800">Glucose Trend</h3>
             </div>
-            <span className="text-xs text-slate-400">Last 5 records</span>
+          
           </div>
           <div className="w-full">
             {glucoseData.length > 1 ? (

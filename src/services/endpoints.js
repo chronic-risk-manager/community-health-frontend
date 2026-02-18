@@ -11,4 +11,6 @@ export const ENDPOINTS = {
   REGISTER: '/users/',
   DASHBOARD: '/dashboard/',
   ME: '/users/me',
+  FOLLOWUPS: '/followups/',
+  FOLLOWUP_DETAIL: (id) => `/followups/${id}/`,
 };

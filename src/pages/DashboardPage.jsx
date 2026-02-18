@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 // Note: Ensure these paths match your actual project structure. 
 // If components are in 'src/components', this relative path assumes DashboardPage is in 'src/pages'
 import KPICard from '../components/ui/KPICard';
-import SimpleBarChart from '../components/charts/SimpleBarChart';
+import SimpleBarChart from '../components/charts/simpleBarChart';
 // import SimpleLineChart from '../components/SimpleLineChart'; // Available if needed for trend data
 
 const DashboardPage = () => {
@@ -73,15 +73,17 @@ const DashboardPage = () => {
 
   // Prepare chart data for Age Distribution
   const ageLabels = age_distribution.map(d => d.range);
-  const ageData = age_distribution.map(d => d.count);
+  const ageData = age_distribution.map(d => Number(d.count));
+
 
   // Prepare chart data for Risk Distribution (aligned Low -> Medium -> High)
   const riskLabels = ['Low', 'Medium', 'High'];
-  const riskData = [
-    risk_distribution.low || 0, 
-    risk_distribution.medium || 0, 
-    risk_distribution.high || 0
-  ];
+ const riskData = [
+  Number(risk_distribution.low) || 0,
+  Number(risk_distribution.medium) || 0,
+  Number(risk_distribution.high) || 0
+];
+
 
   // Calculate new patients count
   const newPatientsCount = weekly_patient_registrations.reduce((acc, curr) => acc + curr.count, 0);
@@ -112,6 +114,7 @@ const DashboardPage = () => {
          colorClass="bg-blue-50 text-blue-600" 
        />
       </div>
+      
        <KPICard 
           title="High Risk" 
           value={counts.high_risk_patients} 
@@ -119,6 +122,8 @@ const DashboardPage = () => {
           icon={Activity} 
           colorClass="bg-red-50 text-red-600" 
         />
+      
+
         <KPICard 
           title="Follow-ups Due" 
           value={counts.upcoming_followups} 
@@ -146,7 +151,7 @@ const DashboardPage = () => {
           </div>
           {/* Container for the chart */}
           <div className="w-full">
-             <SimpleBarChart data={ageData} labels={ageLabels} />
+             <SimpleBarChart data={ageData} labels={ageLabels} height={220} />
           </div>
         </div>
 
@@ -156,9 +161,10 @@ const DashboardPage = () => {
             <h3 className="font-bold text-slate-800 mb-1">Risk Distribution</h3>
             <p className="text-sm text-slate-500">Current active patient base</p>
           </div>
-          <div className="flex-1 flex items-end">
-             <SimpleBarChart data={riskData} labels={riskLabels} />
+          <div className="flex-1">
+             <SimpleBarChart data={riskData} labels={riskLabels} height={220} />
           </div>
+
         </div>
       </div>
     </div>

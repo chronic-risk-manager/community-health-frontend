@@ -212,3 +212,54 @@ export const getCurrentUser = async () => {
     throw error;
   }
 };
+
+/**
+ * Fetches all follow-up tasks with optional filtering.
+ * @param {Object} filters - Optional filters e.g. { status: 'Pending' }
+ */
+export const fetchFollowUps = async (filters = {}) => {
+  try {
+    // Convert filters object to URLSearchParams
+    const params = new URLSearchParams();
+    Object.keys(filters).forEach(key => {
+      if (filters[key] && filters[key] !== 'All') {
+        params.append(key, filters[key]);
+      }
+    });
+    
+    const queryString = params.toString();
+    const url = `${API_BASE_URL}${ENDPOINTS.FOLLOWUPS}${queryString ? `?${queryString}` : ''}`;
+    
+    const response = await fetch(url, {
+      headers: getHeaders()
+    });
+    
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching follow-ups:', error);
+    throw error;
+  }
+};
+
+/**
+ * Updates a follow-up task status.
+ * @param {number|string} id - The ID of the follow-up
+ * @param {Object} data - { status, completed_at }
+ */
+export const updateFollowUp = async (id, data) => {
+  try {
+    const url = `${API_BASE_URL}${ENDPOINTS.FOLLOWUP_DETAIL(id)}`;
+    const response = await fetch(url, {
+      method: 'PATCH',
+      headers: getHeaders(),
+      body: JSON.stringify(data)
+    });
+    
+    if (!response.ok) throw new Error(`Failed to update follow-up`);
+    return await response.json();
+  } catch (error) {
+    console.error(`Error updating follow-up ${id}:`, error);
+    throw error;
+  }
+};
