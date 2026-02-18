@@ -1,13 +1,23 @@
-import { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useNavigate, Link, useLocation } from 'react-router-dom'
 import { LogIn, Activity, AlertCircle, Loader2 } from 'lucide-react'
-import { loginUser,  getCurrentUser } from '../services/api.js'
+import { loginUser, getCurrentUser } from '../services/api.js'
 
 const LoginPage = () => {
   const navigate = useNavigate()
+  const location = useLocation()
+
   const [formData, setFormData] = useState({ username: '', password: '' })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+
+  // ✅ Show session expired message
+  useEffect(() => {
+    const params = new URLSearchParams(location.search)
+    if (params.get('expired')) {
+      setError('Session expired. Please login again.')
+    }
+  }, [location])
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
@@ -20,21 +30,18 @@ const LoginPage = () => {
 
     try {
       const data = await loginUser(formData.username, formData.password)
-      // Store token in localStorage for future use
-     if (data.access_token) {
-  localStorage.setItem('token', data.access_token)
 
-  // Fetch logged-in user info
-  const user = await getCurrentUser()
+      if (data?.access_token) {
+        localStorage.setItem('token', data.access_token)
 
-  // Save user to localStorage
-  localStorage.setItem('user', JSON.stringify(user))
+        const user = await getCurrentUser()
+        localStorage.setItem('user', JSON.stringify(user))
 
-  navigate('/')
-}
- else {
+        navigate('/')
+      } else {
         setError('Token not received from server.')
       }
+
     } catch (err) {
       setError(err.message || 'Invalid username or password')
     } finally {
@@ -62,7 +69,9 @@ const LoginPage = () => {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Username</label>
+            <label className="block text-sm font-medium text-slate-700 mb-1">
+              Username
+            </label>
             <input
               required
               name="username"
@@ -70,12 +79,13 @@ const LoginPage = () => {
               value={formData.username}
               onChange={handleChange}
               className="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-              placeholder="Enter your username"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Password</label>
+            <label className="block text-sm font-medium text-slate-700 mb-1">
+              Password
+            </label>
             <input
               required
               name="password"
@@ -83,7 +93,6 @@ const LoginPage = () => {
               value={formData.password}
               onChange={handleChange}
               className="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-              placeholder="••••••••"
             />
           </div>
 
