@@ -29,6 +29,8 @@ const FollowUpsPage = () => {
       }
 
       const data = await fetchFollowUps(params);
+     
+      console.log('Fetched follow-up tasks:', data);
       
       // Flatten the structure
       const flattenedTasks = data.flatMap(item => 
@@ -43,7 +45,7 @@ const FollowUpsPage = () => {
       flattenedTasks.sort((a, b) => {
         if (a.status === 'Completed' && b.status !== 'Completed') return 1;
         if (a.status !== 'Completed' && b.status === 'Completed') return -1;
-        return new Date(a.due_date) - new Date(b.due_date);
+        return new Date(b.due_date) - new Date(a.due_date);
       });
 
       setTasks(flattenedTasks);

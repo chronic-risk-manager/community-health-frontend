@@ -18,6 +18,8 @@ const PatientsPage = ({ navigate }) => {
       try {
         setLoading(true)
         const data = await fetchPatients()
+        data.reverse();
+        console.log('Fetched patients:', data)
         setPatients(data)
         setError(null)
       } catch (err) {

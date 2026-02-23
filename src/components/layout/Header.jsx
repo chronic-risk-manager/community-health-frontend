@@ -10,10 +10,7 @@ const Header = ({ title, openSidebar }) => {
         <h1 className="text-xl font-bold">{title}</h1>
       </div>
 
-      <div className="relative">
-        <Bell className="text-slate-400" />
-        <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-      </div>
+      
     </header>
   )
 }
